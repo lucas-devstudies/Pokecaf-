@@ -1,63 +1,67 @@
-# ☕ PokéCafé – Sistema de Vendas
+# 🧋 PokéCafé - Sistema de Vendas
 
-Este projeto foi desenvolvido como parte da disciplina de **Programação Orientada a Objetos** no curso de **Engenharia de Software** do **IFAM – Instituto Federal do Amazonas**.  
-A proposta foi criar um sistema de vendas simples para uma **cafeteria temática de Pokémon**, utilizando **Java com Swing**, **NetBeans** e **MySQL**.
-
----
-
-## 📌 Descrição Geral
-
-O PokéCafé é uma aplicação de desktop que permite:
-
-- Cadastro de produtos com nome, ingredientes e valor.
-- Registro de vendas com nome do cliente, forma de pagamento e tipo de venda.
-- Inserção de itens em cada venda.
-- Consulta de vendas por período e por status.
-- Gerenciamento de usuários do sistema.
-
-A interface gráfica foi construída com componentes Swing utilizando a interface de arrastar e soltar do NetBeans.
+Este é um sistema de gerenciamento de vendas desenvolvido para uma **cafeteria temática de Pokémon**, criado com o objetivo de estudo durante as aulas de **Programação Orientada a Objetos** no curso de **Engenharia de Software do IFAM**.
 
 ---
 
-## 🗃️ Estrutura do Banco de Dados
+## 🎯 Objetivo
 
-O sistema utiliza um banco de dados MySQL com as seguintes tabelas principais:
+Este projeto foi feito com fins educacionais para aplicar conceitos de:
 
-- `Produto`
-- `Usuarios`
-- `Venda`
-- `ItemVenda`
+- Programação Orientada a Objetos (POO)
+- Manipulação de banco de dados com JDBC
+- Interface gráfica com Java Swing
+- Manipulação de imagens
+- Lógica de cadastro, listagem e controle de vendas
 
-As tabelas estão relacionadas por meio de chaves estrangeiras, garantindo integridade entre produtos, vendas e itens vendidos.
-
----
-
-## 💻 Tecnologias Utilizadas
-
-- **Java** (Swing)
-- **MySQL**
-- **NetBeans IDE**
-- **JDBC**
+Como um grande fã de **Pokémon**, decidi transformar o projeto em uma cafeteria temática — o **PokéCafé** — deixando o processo de desenvolvimento ainda mais divertido e significativo.
 
 ---
 
-## ⚠️ Observações Importantes
+## 🛠️ Tecnologias Utilizadas
 
-> Por conta do tempo limitado durante as aulas, **não foi possível implementar um tratamento completo de erros** e validações mais avançadas.  
-> Ainda assim, o sistema está funcional e cumpre todos os requisitos propostos inicialmente.
-
----
-
-## 🧠 Possibilidades de Melhorias Futuras
-
-- Melhor tratamento de exceções.
-- Hash de senhas e autenticação segura.
-- Geração de relatórios (PDF, Excel).
-- Layout mais moderno e responsivo.
-- Integração com banco de dados online.
+- Java
+- Swing (GUI)
+- MySQL
+- NetBeans IDE
 
 ---
 
-## 🧑‍🎓 Autor
+## 💾 Banco de Dados
 
-Desenvolvido por Lucas Ferreira - estudante de Engenharia de Software do IFAM, como forma de aplicar os conhecimentos adquiridos em Programação Orientada a Objetos.
+O sistema utiliza um banco de dados MySQL com tabelas para:
+
+- `Produto`: Armazena nome, ingredientes, valor e imagem do produto
+- `Usuarios`: Para login
+- `Venda` e `ItemVenda`: Para registrar e controlar as vendas realizadas
+
+As **imagens dos produtos** são carregadas e salvas no sistema, permitindo que cada item cadastrado tenha uma imagem associada.
+
+---
+
+## 📦 Funcionalidades
+
+- Cadastro, edição e exclusão de produtos com imagem
+- Listagem dos produtos em uma tabela com imagem visível
+- Controle de carrinho de compras e finalização de vendas
+- Registros de vendas com cliente, data, forma de pagamento e status
+- Interface intuitiva com navegação via botões e telas modais
+
+---
+
+## ⚠️ Aviso
+
+> Por conta do tempo limitado para desenvolvimento, o sistema **não possui tratamento avançado de erros**, mas está totalmente funcional e pronto para ser usado em testes ou como base para novos projetos.
+
+---
+
+## ✨ Screenshots *(opcional)*
+
+### 📌 Tela de Login
+![login](assets/login.png)
+
+### 📌 Tela Principal
+![login](assets/principal.png)
+
+### 📌 Tela de Vendas
+![login](assets/pedido.png)
