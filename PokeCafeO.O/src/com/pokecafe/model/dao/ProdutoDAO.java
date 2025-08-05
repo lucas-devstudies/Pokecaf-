@@ -28,11 +28,12 @@ public class ProdutoDAO {
         PreparedStatement stmt = null;
         
         try {
-            stmt = con.prepareStatement("INSERT INTO produto (nome,ingredientes,valor) VALUES (?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO produto (nome,ingredientes,valor,imagem) VALUES (?,?,?,?)");
             
             stmt.setString(1,p.getNome());
             stmt.setString(2,p.getIngredientes());
             stmt.setDouble(3, p.getPreco());
+            stmt.setString(4, p.getImagem());
             
             stmt.executeUpdate();
             
@@ -61,6 +62,7 @@ public class ProdutoDAO {
                 produto.setNome(rs.getString("nome"));
                 produto.setIngredientes(rs.getString("ingredientes"));
                 produto.setPreco(rs.getDouble("valor"));
+                produto.setImagem(rs.getString("imagem"));
                 produtos.add(produto);       
             }
             
@@ -77,12 +79,13 @@ public class ProdutoDAO {
         PreparedStatement stmt = null;
         
         try {
-            stmt = con.prepareStatement("UPDATE produto set nome = ?, ingredientes=?, valor=? WHERE id = ?");
+            stmt = con.prepareStatement("UPDATE produto set nome = ?, ingredientes=?, valor=?, imagem =? WHERE id = ?");
             
             stmt.setString(1,p.getNome());
             stmt.setString(2,p.getIngredientes());
             stmt.setDouble(3, p.getPreco());
-            stmt.setInt(4,p.getId());
+            stmt.setString(4,p.getImagem());
+            stmt.setInt(5,p.getId());
             
             stmt.executeUpdate();
             
@@ -94,6 +97,29 @@ public class ProdutoDAO {
             ConnectionFactory.closeConnection(con,stmt);
         }
     }
+    public Produto findById(int id){
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        Produto p = new Produto();
+        try {
+            stmt = con.prepareStatement("select * from produto WHERE id = ?");
+            stmt.setInt(1,id);            
+            ResultSet produtoS = stmt.executeQuery();
+             while (produtoS.next()) {
+                    p.setId(produtoS.getInt("id"));
+                    p.setNome(produtoS.getString("nome"));
+                    p.setIngredientes(produtoS.getString("ingredientes"));
+                    p.setPreco((double)Double.parseDouble(produtoS.getString("valor")));
+                    p.setImagem(produtoS.getString("imagem"));
+                }
+             } 
+        catch (SQLException ex) {
+            new AlertErro(null,"Erro ao Atualizar: "+ex).setVisible(true);
+        } finally{
+            ConnectionFactory.closeConnection(con,stmt);
+            return p;
+        }
+    }
     public void delete(Produto p){
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -101,7 +127,6 @@ public class ProdutoDAO {
         try {
             stmt = con.prepareStatement("DELETE FROM produto WHERE id = ?");
             stmt.setInt(1,p.getId());
-            
             stmt.executeUpdate();
             
             new AlertSucesso(null,"Deletado com Sucesso").setVisible(true);
@@ -130,6 +155,7 @@ public class ProdutoDAO {
                 produto.setNome(rs.getString("nome"));
                 produto.setIngredientes(rs.getString("ingredientes"));
                 produto.setPreco(rs.getDouble("valor"));
+                produto.setImagem(rs.getString("imagem"));
                 produtos.add(produto);       
             }
             

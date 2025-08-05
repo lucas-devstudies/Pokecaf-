@@ -272,7 +272,7 @@ public class DashCozinha extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) jTProdutos.getModel();
         modelo.setNumRows(0);
         VendaDAO vdao = new VendaDAO();
-        for(Venda v: vdao.readIncompletos()){
+        for(Venda v: vdao.read()){
             modelo.addRow(new Object[]{
                 v.getId(),
                 v.getNomeCliente(),

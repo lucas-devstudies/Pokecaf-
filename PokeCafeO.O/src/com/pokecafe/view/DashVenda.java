@@ -7,11 +7,17 @@ package com.pokecafe.view;
 import com.pokecafe.model.bean.Produto;
 import com.pokecafe.model.bean.ProdutoCarrinho;
 import com.pokecafe.model.dao.ProdutoDAO;
+import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -39,7 +45,7 @@ public class DashVenda extends javax.swing.JFrame {
 
         // Deixa a tabela não editável
         DefaultTableModel modelo = new DefaultTableModel(
-            new Object[]{"CÓDIGO", "NOME", "INGREDIENTES", "VALOR"}, 0
+            new Object[]{"CÓDIGO","FOTO", "NOME", "INGREDIENTES", "VALOR"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -47,9 +53,32 @@ public class DashVenda extends javax.swing.JFrame {
             }
         };
         jTProdutos.setModel(modelo);
-
+        
         readJTable();
-        Produto selecionado = new Produto();
+        DefaultTableCellRenderer centralizarImagem = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel();
+                if (value instanceof ImageIcon) {
+                    label.setIcon((ImageIcon) value);
+                    label.setHorizontalAlignment(JLabel.CENTER);
+                    label.setVerticalAlignment(JLabel.CENTER);
+                }
+                if (isSelected) {
+                    label.setOpaque(true);
+                    label.setBackground(table.getSelectionBackground());
+                }
+                return label;
+            }
+        };
+
+        // Aplica o renderizador na primeira coluna (FOTO)
+        jTProdutos.getColumnModel().getColumn(1).setCellRenderer(centralizarImagem);
+
+        // Aumenta a altura da linha para caber a imagem
+        jTProdutos.setRowHeight(60);
+
     }
 
     /**
@@ -83,13 +112,13 @@ public class DashVenda extends javax.swing.JFrame {
         jTProdutos.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jTProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "CÓDIGO", "NOME", "INGREDIENTES", "VALOR"
+                "CÓDIGO", "FOTO", "NOME", "INGREDIENTES", "VALOR"
             }
         ));
         jTProdutos.setGridColor(new java.awt.Color(255, 0, 51));
@@ -254,10 +283,16 @@ public class DashVenda extends javax.swing.JFrame {
     private void jButtonAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdicionarActionPerformed
         if(jTProdutos.getSelectedRow() != -1){
             ProdutoCarrinho pc = new ProdutoCarrinho();
-            pc.setId(Integer.parseInt(jTProdutos.getValueAt(jTProdutos.getSelectedRow(), 0).toString()));
-            pc.setNome(jTProdutos.getValueAt(jTProdutos.getSelectedRow(), 1).toString());
-            pc.setIngredientes(jTProdutos.getValueAt(jTProdutos.getSelectedRow(), 2).toString());
-            pc.setPreco(Double.parseDouble(jTProdutos.getValueAt(jTProdutos.getSelectedRow(),3).toString()));
+            ProdutoDAO pDAO = new ProdutoDAO();
+            Produto p = new Produto();
+            p = pDAO.findById(Integer.parseInt(jTProdutos.getValueAt(jTProdutos.getSelectedRow(), 0).toString()));
+            pc.setId(p.getId());
+            pc.setNome(p.getNome());
+            pc.setPreco(p.getPreco());
+            pc.setQuantidade(0);
+            pc.setImagem(p.getImagem());
+            pc.setIngredientes(p.getIngredientes());
+            pc.setObservacao("");
             ModalPedido mp = new ModalPedido(this,pc,carrinho);
             mp.setVisible(true);
             carrinho = mp.getProdutoAtualizado();
@@ -287,26 +322,39 @@ public class DashVenda extends javax.swing.JFrame {
         modelo.setNumRows(0);
         ProdutoDAO pdao = new ProdutoDAO();
         for(Produto p: pdao.readForNome(nome)){
+            ImageIcon icon = new ImageIcon(p.getImagem());
+            Image img = icon.getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH);
+            ImageIcon imagem = new ImageIcon(img);
             modelo.addRow(new Object[]{
                 p.getId(),
+                imagem,
                 p.getNome(),
                 p.getIngredientes(),
-                p.getPreco()
+                mudarVirgula(p.getPreco())
             });
         }
+    }
+    public String mudarVirgula(Double texto){
+        String TextoNovo;
+        TextoNovo = String.format("R$ %.2f",texto).replace(".", ",");
+        return TextoNovo;
     }
     public void readJTable(){
         DefaultTableModel modelo = (DefaultTableModel) jTProdutos.getModel();
         modelo.setNumRows(0);
         ProdutoDAO pdao = new ProdutoDAO();
         for(Produto p: pdao.read()){
+            ImageIcon icon = new ImageIcon(p.getImagem());
+            Image img = icon.getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH);
+            ImageIcon imagem = new ImageIcon(img);
             modelo.addRow(new Object[]{
                 p.getId(),
+                imagem,
                 p.getNome(),
                 p.getIngredientes(),
-                p.getPreco()
+                mudarVirgula(p.getPreco())
             });
-        }
+        }    
     }
     /**
      * @param args the command line arguments

@@ -263,6 +263,7 @@ public class ModalCozinha extends javax.swing.JFrame {
     }
     public void carregarComponentes(){
         txtTipoVenda.setText(venda.getTipoVenda());
+        txtNome.setText(venda.getNomeCliente());
         readJTable();
     }
     public void carregarImagem(){

@@ -48,7 +48,7 @@ public class VendaDAO {
             }
 
             // 2. Inserir os itens da venda
-            String sqlItem = "INSERT INTO ItemVenda (venda_id, produto_id, quantidade, total) VALUES (?, ?, ?, ?)";
+            String sqlItem = "INSERT INTO ItemVenda (venda_id, produto_id, quantidade, total,observacao) VALUES (?, ?, ?, ?, ?)";
             stmtItem = con.prepareStatement(sqlItem);
 
             for (ProdutoCarrinho pc : v.getListaProdutos()) {
@@ -56,6 +56,7 @@ public class VendaDAO {
                 stmtItem.setInt(2, pc.getId()); // produto_id
                 stmtItem.setInt(3, pc.getQuantidade());
                 stmtItem.setDouble(4, pc.getPreco() * pc.getQuantidade());
+                stmtItem.setString(5, pc.getObservacao());
                 stmtItem.addBatch(); // melhora performance
             }
 
@@ -103,7 +104,7 @@ public class VendaDAO {
                 venda.setData(rsVenda.getTimestamp("data")); // Date ou Timestamp, dependendo
 
                 // 2. Buscar os itens dessa venda
-                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total " +
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total,iv.observacao " +
                                   "FROM ItemVenda iv " +
                                   "JOIN Produto p ON iv.produto_id = p.id " +
                                   "WHERE iv.venda_id = ?";
@@ -120,7 +121,7 @@ public class VendaDAO {
                     pc.setIngredientes(rsItens.getString("ingredientes"));
                     pc.setQuantidade(rsItens.getInt("quantidade"));
                     pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade()); // calcula preço unitário
-
+                    pc.setObservacao(rsItens.getString("observacao"));
                     listaProdutos.add(pc);
                 }
 
@@ -166,7 +167,7 @@ public class VendaDAO {
                 venda.setStatus(rsVenda.getString("statusVenda"));
                 venda.setData(rsVenda.getTimestamp("data")); // Date ou Timestamp, dependendo
                 // 2. Buscar os itens dessa venda
-                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total " +
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total,iv.observacao " +
                                   "FROM ItemVenda iv " +
                                   "JOIN Produto p ON iv.produto_id = p.id " +
                                   "WHERE iv.venda_id = ?";
@@ -184,6 +185,7 @@ public class VendaDAO {
                     pc.setIngredientes(rsItens.getString("ingredientes"));
                     pc.setQuantidade(rsItens.getInt("quantidade"));
                     pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade()); // calcula preço unitário
+                    pc.setObservacao(rsItens.getString("observacao"));
                     total += pc.getPreco()*pc.getQuantidade();
                     listaProdutos.add(pc);
                 }
@@ -233,7 +235,7 @@ public class VendaDAO {
                 venda.setStatus(rsVenda.getString("statusVenda"));
                 venda.setData(rsVenda.getTimestamp("data")); // Date ou Timestamp, dependendo
                 // 2. Buscar os itens dessa venda
-                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total " +
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total,p.imagem,,iv.observacao " +
                                   "FROM ItemVenda iv " +
                                   "JOIN Produto p ON iv.produto_id = p.id " +
                                   "WHERE iv.venda_id = ?";
@@ -251,6 +253,8 @@ public class VendaDAO {
                     pc.setIngredientes(rsItens.getString("ingredientes"));
                     pc.setQuantidade(rsItens.getInt("quantidade"));
                     pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade()); // calcula preço unitário
+                    pc.setImagem(rsItens.getString("imagem"));
+                    pc.setObservacao(rsItens.getString("observacao"));
                     total += pc.getPreco()*pc.getQuantidade();
                     listaProdutos.add(pc);
                 }
@@ -298,7 +302,7 @@ public class VendaDAO {
                 venda.setData(rsVenda.getTimestamp("data"));
 
                 // Buscar produtos dessa venda
-                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total " +
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total, p.imagem,iv.observacao " +
                                   "FROM ItemVenda iv " +
                                   "JOIN Produto p ON iv.produto_id = p.id " +
                                   "WHERE iv.venda_id = ?";
@@ -314,6 +318,8 @@ public class VendaDAO {
                     pc.setIngredientes(rsItens.getString("ingredientes"));
                     pc.setQuantidade(rsItens.getInt("quantidade"));
                     pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade());
+                    pc.setImagem(rsItens.getString("imagem"));
+                    pc.setObservacao(rsItens.getString("observacao"));
 
                     listaProdutos.add(pc);
                 }
@@ -359,7 +365,7 @@ public class VendaDAO {
                 venda.setStatus(rsVenda.getString("statusVenda"));
                 venda.setData(rsVenda.getTimestamp("data"));
 
-                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total " +
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total,p.imagem,iv.observacao " +
                                   "FROM ItemVenda iv " +
                                   "JOIN Produto p ON iv.produto_id = p.id " +
                                   "WHERE iv.venda_id = ?";
@@ -376,6 +382,8 @@ public class VendaDAO {
                     pc.setIngredientes(rsItens.getString("ingredientes"));
                     pc.setQuantidade(rsItens.getInt("quantidade"));
                     pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade());
+                    pc.setImagem(rsItens.getString("imagem"));
+                    pc.setObservacao(rsItens.getString("observacao"));
 
                     listaProdutos.add(pc);
                 }
@@ -391,6 +399,69 @@ public class VendaDAO {
         }
 
         return venda;
+    }
+    public ArrayList<Venda> read() {
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmtVenda = null;
+        PreparedStatement stmtItens = null;
+        ResultSet rsVenda = null;
+        ResultSet rsItens = null;
+
+        ArrayList<Venda> listaVendas = new ArrayList<>();
+
+        try {
+            String sqlVenda = "SELECT * FROM Venda";
+            stmtVenda = con.prepareStatement(sqlVenda);
+            rsVenda = stmtVenda.executeQuery();
+
+            while (rsVenda.next()) {
+                Venda venda = new Venda();
+                venda.setId(rsVenda.getInt("id"));
+                venda.setNomeCliente(rsVenda.getString("nome_cliente"));
+                venda.setFormaPagamento(rsVenda.getString("forma_pagamento"));
+                venda.setTipoVenda(rsVenda.getString("tipo_venda"));
+                venda.setStatus(rsVenda.getString("statusVenda"));
+                venda.setData(rsVenda.getTimestamp("data"));
+
+                // Buscar produtos dessa venda
+                String sqlItens = "SELECT p.id, p.nome, p.ingredientes, iv.quantidade, iv.total, p.imagem,iv.observacao " +
+                                  "FROM ItemVenda iv " +
+                                  "JOIN Produto p ON iv.produto_id = p.id " +
+                                  "WHERE iv.venda_id = ?";
+                stmtItens = con.prepareStatement(sqlItens);
+                stmtItens.setInt(1, venda.getId());
+                rsItens = stmtItens.executeQuery();
+
+                ArrayList<ProdutoCarrinho> listaProdutos = new ArrayList<>();
+                while (rsItens.next()) {
+                    ProdutoCarrinho pc = new ProdutoCarrinho();
+                    pc.setId(rsItens.getInt("id"));
+                    pc.setNome(rsItens.getString("nome"));
+                    pc.setIngredientes(rsItens.getString("ingredientes"));
+                    pc.setQuantidade(rsItens.getInt("quantidade"));
+                    pc.setPreco(rsItens.getDouble("total") / pc.getQuantidade());
+                    pc.setImagem(rsItens.getString("imagem"));
+                    pc.setObservacao(rsItens.getString("observacao"));
+
+                    listaProdutos.add(pc);
+                }
+
+                venda.setListaProdutos(listaProdutos);
+                listaVendas.add(venda);
+
+                // Fechar ResultSet e Statement de itens após cada venda
+                rsItens.close();
+                stmtItens.close();
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            ConnectionFactory.closeConnection(con, stmtVenda, rsVenda);
+            // stmtItens e rsItens já são fechados dentro do loop
+        }
+
+        return listaVendas;
     }
     public void updateStatus(int vendaId, String novoStatus) {
         Connection con = ConnectionFactory.getConnection();

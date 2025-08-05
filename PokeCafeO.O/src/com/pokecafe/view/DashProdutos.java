@@ -6,7 +6,13 @@ package com.pokecafe.view;
 
 import com.pokecafe.model.dao.ProdutoDAO;
 import com.pokecafe.model.bean.Produto;
+import java.awt.Component;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -31,7 +37,7 @@ public class DashProdutos extends javax.swing.JFrame {
 
         // Deixa a tabela não editável
         DefaultTableModel modelo = new DefaultTableModel(
-            new Object[]{"CÓDIGO", "NOME", "INGREDIENTES", "VALOR"}, 0
+            new Object[]{"ID","FOTO", "NOME", "INGREDIENTES", "VALOR"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -41,6 +47,30 @@ public class DashProdutos extends javax.swing.JFrame {
         jTProdutos.setModel(modelo);
 
         readJTable();
+        DefaultTableCellRenderer centralizarImagem = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel();
+                if (value instanceof ImageIcon) {
+                    label.setIcon((ImageIcon) value);
+                    label.setHorizontalAlignment(JLabel.CENTER);
+                    label.setVerticalAlignment(JLabel.CENTER);
+                }
+                if (isSelected) {
+                    label.setOpaque(true);
+                    label.setBackground(table.getSelectionBackground());
+                }
+                return label;
+            }
+        };
+
+        // Aplica o renderizador na primeira coluna (FOTO)
+        jTProdutos.getColumnModel().getColumn(1).setCellRenderer(centralizarImagem);
+
+        // Aumenta a altura da linha para caber a imagem
+        jTProdutos.setRowHeight(60);
+
         Produto selecionado = new Produto();
     }
 
@@ -49,11 +79,15 @@ public class DashProdutos extends javax.swing.JFrame {
         modelo.setNumRows(0);
         ProdutoDAO pdao = new ProdutoDAO();
         for(Produto p: pdao.read()){
+            ImageIcon icon = new ImageIcon(p.getImagem());
+            Image img = icon.getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH);
+            ImageIcon imagem = new ImageIcon(img);
             modelo.addRow(new Object[]{
                 p.getId(),
+                imagem,
                 p.getNome(),
                 p.getIngredientes(),
-                p.getPreco()
+                mudarVirgula(p.getPreco())
             });
         }
     }
@@ -91,13 +125,13 @@ public class DashProdutos extends javax.swing.JFrame {
         jTProdutos.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jTProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "CÓDIGO", "NOME", "INGREDIENTES", "VALOR"
+                "ID", "FOTO", "NOME", "INGREDIENTES", "VALOR"
             }
         ));
         jTProdutos.setGridColor(new java.awt.Color(255, 0, 51));
@@ -301,11 +335,10 @@ public class DashProdutos extends javax.swing.JFrame {
     private void jButtonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarActionPerformed
         // TODO add your handling code here:
         if(jTProdutos.getSelectedRow() != -1){
+            ProdutoDAO pDAO = new ProdutoDAO();
             Produto p = new Produto();
-            p.setId((int) jTProdutos.getValueAt(jTProdutos.getSelectedRow(),0));
-            p.setNome(jTProdutos.getValueAt(jTProdutos.getSelectedRow(),1).toString());
-            p.setIngredientes(jTProdutos.getValueAt(jTProdutos.getSelectedRow(),2).toString());
-            p.setPreco((Double) jTProdutos.getValueAt(jTProdutos.getSelectedRow(),3));
+            p = pDAO.findById((int) jTProdutos.getValueAt(jTProdutos.getSelectedRow(), 0));
+            System.out.println(p.getImagem());
             ModalEditar me = new ModalEditar(p);
             me.setVisible(true);
         }else{
@@ -344,11 +377,15 @@ public class DashProdutos extends javax.swing.JFrame {
                 p.getId(),
                 p.getNome(),
                 p.getIngredientes(),
-                p.getPreco()
+                mudarVirgula(p.getPreco())
             });
         }
     }
-    
+    public String mudarVirgula(Double texto){
+        String TextoNovo;
+        TextoNovo = String.format("R$ %.2f",texto).replace(".", ",");
+        return TextoNovo;
+    }
     /**
      * @param args the command line arguments
      */

@@ -6,7 +6,23 @@ package com.pokecafe.view;
 
 import com.pokecafe.model.bean.Produto;
 import com.pokecafe.model.dao.ProdutoDAO;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.NumberFormat;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -18,12 +34,25 @@ public class ModalEditar extends javax.swing.JFrame {
      * Creates new form TelaEditar
      */
     private Produto produto;
+    private String path_imagem;
     
     public ModalEditar(Produto prod) {
         this.setUndecorated(true);
-        this.produto = prod;
-        initComponents();
-        carregarDados(prod);
+            this.produto = prod;
+            this.path_imagem = produto.getImagem();
+            initComponents();
+            this.pack();
+            this.setLocationRelativeTo(null);
+            NumberFormat nf = NumberFormat.getNumberInstance();
+            nf.setMinimumFractionDigits(2);
+            nf.setMaximumFractionDigits(2);
+
+            NumberFormatter formatter = new NumberFormatter(nf);
+            formatter.setAllowsInvalid(false);
+
+            txtValor.setFormatterFactory(new DefaultFormatterFactory(formatter));
+            txtValor.setValue(produto.getPreco());
+            carregarDados(prod);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -35,27 +64,84 @@ public class ModalEditar extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelImagem = new javax.swing.JLabel();
+        jButtonImagem = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        txtValor = new javax.swing.JFormattedTextField();
         jButtonEditar = new javax.swing.JButton();
         txtNome = new javax.swing.JTextField();
         txtIngredientes = new javax.swing.JTextField();
         jButtonCancelar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        txtValor = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(384, 605));
+        setMinimumSize(new java.awt.Dimension(384, 605));
+        setPreferredSize(new java.awt.Dimension(384, 605));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 71, 127)));
+        jPanel1.setMaximumSize(new java.awt.Dimension(384, 605));
+        jPanel1.setMinimumSize(new java.awt.Dimension(384, 605));
+        jPanel1.setPreferredSize(new java.awt.Dimension(384, 605));
+        jPanel1.setRequestFocusEnabled(false);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel3.setText("Valor:");
+
+        jLabelImagem.setBackground(new java.awt.Color(255, 102, 0));
+        jLabelImagem.setForeground(new java.awt.Color(153, 51, 255));
+        jLabelImagem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelImagem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
+        jLabelImagem.setMaximumSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setMinimumSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setPreferredSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setRequestFocusEnabled(false);
+
+        jButtonImagem.setBackground(new java.awt.Color(243, 49, 107));
+        jButtonImagem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButtonImagem.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonImagem.setText("Inserir Imagem");
+        jButtonImagem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonImagemActionPerformed(evt);
+            }
+        });
+
+        jPanel5.setBackground(new java.awt.Color(243, 49, 107));
+        jPanel5.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel8.setBackground(new java.awt.Color(243, 49, 107));
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("EDITAR DE PRODUTO");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+        );
+
+        try {
+            txtValor.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("R$ 00,00")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txtValor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         jButtonEditar.setBackground(new java.awt.Color(243, 49, 107));
         jButtonEditar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButtonEditar.setForeground(new java.awt.Color(255, 255, 255));
-        jButtonEditar.setText("Confirmar");
+        jButtonEditar.setText("EDITAR");
         jButtonEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonEditarActionPerformed(evt);
@@ -92,71 +178,43 @@ public class ModalEditar extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setText("Ingredientes:");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel3.setText("Valor:");
-
-        txtValor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        txtValor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtValorActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setBackground(new java.awt.Color(255, 102, 0));
-        jLabel4.setForeground(new java.awt.Color(153, 51, 255));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
-
-        jPanel5.setBackground(new java.awt.Color(243, 49, 107));
-        jPanel5.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel8.setBackground(new java.awt.Color(243, 49, 107));
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("EDITAR PRODUTO");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNome)
-                        .addComponent(txtIngredientes)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(txtValor)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtNome)
+                    .addComponent(txtIngredientes)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
-                        .addGap(134, 134, 134)))
-                .addContainerGap(30, Short.MAX_VALUE))
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                    .addComponent(txtValor))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButtonImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(114, 114, 114))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(122, 122, 122))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(jButtonImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
@@ -168,24 +226,24 @@ public class ModalEditar extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(47, 47, 47))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -193,14 +251,49 @@ public class ModalEditar extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarActionPerformed
+    private void jButtonImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImagemActionPerformed
+        // TODO add your handling code here:
+        File pasta = new File("imagens");
+        if (!pasta.exists()) {
+            pasta.mkdir(); // Cria a pasta se ela ainda não existir
+        }
 
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File imagemSelecionada = fileChooser.getSelectedFile();
+
+            // Copia a imagem para uma pasta do projeto
+            Path destino = Paths.get("imagens/" + imagemSelecionada.getName());
+            try {
+                Files.copy(imagemSelecionada.toPath(), destino, StandardCopyOption.REPLACE_EXISTING);
+                String caminhoImagem = destino.toString();
+
+                ImageIcon imagem = new ImageIcon(caminhoImagem);
+                Image imagemRedimensionada = imagem.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT);
+                jLabelImagem.setIcon(new ImageIcon(imagemRedimensionada));
+                path_imagem = caminhoImagem;
+
+            } catch (IOException ex) {
+            }
+        }
+    }//GEN-LAST:event_jButtonImagemActionPerformed
+
+    private void jButtonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarActionPerformed
+   
         ProdutoDAO dao = new ProdutoDAO();
         this.produto.setId(produto.getId());
         this.produto.setNome(txtNome.getText());
         this.produto.setIngredientes(txtIngredientes.getText());
-        this.produto.setPreco(Double.parseDouble(txtValor.getText()));
-
+        this.produto.setPreco(Double.parseDouble(txtValor.getText().replace(",",".")));
+        this.produto.setImagem(this.path_imagem);
+        if(path_imagem.equals("")){
+            new AlertErro(this,"Selecione uma Imagem").setVisible(true);
+        }else{
+            dao.update(this.produto);   
+        }
+        
         dao.update(this.produto);
         this.dispose();
     }//GEN-LAST:event_jButtonEditarActionPerformed
@@ -217,28 +310,29 @@ public class ModalEditar extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
-
-    private void txtValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtValorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorActionPerformed
     private void carregarDados(Produto p){
         txtNome.setText(p.getNome());
         txtIngredientes.setText(p.getIngredientes());
         txtValor.setText(""+(p.getPreco()));
+        ImageIcon imagem = new ImageIcon(this.path_imagem);
+        Image imagemRedimensionada = imagem.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT);
+        jLabelImagem.setIcon(new ImageIcon(imagemRedimensionada));
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonEditar;
+    private javax.swing.JButton jButtonImagem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JTextField txtIngredientes;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtValor;
+    private javax.swing.JFormattedTextField txtValor;
     // End of variables declaration//GEN-END:variables
 }

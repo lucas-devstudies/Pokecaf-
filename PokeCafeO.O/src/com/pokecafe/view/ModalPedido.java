@@ -5,9 +5,15 @@
 package com.pokecafe.view;
 
 import com.pokecafe.model.bean.ProdutoCarrinho;
+import java.awt.Component;
+import java.awt.Image;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -29,8 +35,8 @@ public class ModalPedido extends javax.swing.JDialog {
         this.carrinho = carrinho;
         this.setUndecorated(true);
         initComponents();
-        carregarDados(produto);
         setLocationRelativeTo(parent);
+        carregarDados(produto);
     }
 
     /**
@@ -49,7 +55,7 @@ public class ModalPedido extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        jLabelImagem = new javax.swing.JLabel();
         jTxtTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -97,9 +103,11 @@ public class ModalPedido extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setText("Observação");
 
-        jLabel4.setBackground(new java.awt.Color(255, 102, 0));
-        jLabel4.setForeground(new java.awt.Color(153, 51, 255));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
+        jLabelImagem.setBackground(new java.awt.Color(255, 102, 0));
+        jLabelImagem.setForeground(new java.awt.Color(153, 51, 255));
+        jLabelImagem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelImagem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
+        jLabelImagem.setPreferredSize(new java.awt.Dimension(120, 120));
 
         jTxtTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jTxtTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -109,10 +117,6 @@ public class ModalPedido extends javax.swing.JDialog {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(132, 132, 132)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,16 +129,22 @@ public class ModalPedido extends javax.swing.JDialog {
                     .addComponent(txtQtd)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(30, 30, 30))
-            .addComponent(jTxtTitulo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jTxtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(113, 113, 113))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(jTxtTitulo)
-                .addGap(17, 17, 17)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
+                .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -186,7 +196,10 @@ public class ModalPedido extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
     private void carregarDados(ProdutoCarrinho prod){
-        jTxtTitulo.setText(""+prod.getNome());
+        jTxtTitulo.setText(prod.getNome());
+        ImageIcon imagem = new ImageIcon(prod.getImagem());
+        Image imagemRedimensionada = imagem.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+        jLabelImagem.setIcon(new ImageIcon(imagemRedimensionada));
     }
     
     public ArrayList<ProdutoCarrinho> getProdutoAtualizado(){
@@ -200,7 +213,7 @@ public class ModalPedido extends javax.swing.JDialog {
     private javax.swing.JButton jButtonConfirmar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel jTxtTitulo;
     private javax.swing.JTextField txObs;

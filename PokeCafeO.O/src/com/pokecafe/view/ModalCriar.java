@@ -6,7 +6,21 @@ package com.pokecafe.view;
 
 import com.pokecafe.model.bean.Produto;
 import com.pokecafe.model.dao.ProdutoDAO;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.NumberFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -17,9 +31,21 @@ public class ModalCriar extends javax.swing.JFrame {
     /**
      * Creates new form TelaCriar
      */
+    private String path_imagem = "";
+    
     public ModalCriar() {
         this.setUndecorated(true);
         initComponents();
+        
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+
+        NumberFormatter formatter = new NumberFormatter(nf);
+        formatter.setAllowsInvalid(false);
+
+        txtValor.setFormatterFactory(new DefaultFormatterFactory(formatter));
+        txtValor.setValue(0.00);
     }
 
     /**
@@ -34,15 +60,16 @@ public class ModalCriar extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        jButtonCadastrar = new javax.swing.JButton();
         txtNome = new javax.swing.JTextField();
         txtIngredientes = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        txtValor = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        jLabelImagem = new javax.swing.JLabel();
+        jButtonImagem = new javax.swing.JButton();
+        txtValor = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,20 +89,20 @@ public class ModalCriar extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
         );
 
-        jButton1.setBackground(new java.awt.Color(243, 49, 107));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Cadastrar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCadastrar.setBackground(new java.awt.Color(243, 49, 107));
+        jButtonCadastrar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButtonCadastrar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonCadastrar.setText("Cadastrar");
+        jButtonCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonCadastrarActionPerformed(evt);
             }
         });
 
@@ -93,13 +120,13 @@ public class ModalCriar extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 255, 255));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(243, 49, 107));
-        jButton2.setText("Cancelar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCancelar.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonCancelar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButtonCancelar.setForeground(new java.awt.Color(243, 49, 107));
+        jButtonCancelar.setText("Cancelar");
+        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButtonCancelarActionPerformed(evt);
             }
         });
 
@@ -112,48 +139,69 @@ public class ModalCriar extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setText("Valor:");
 
-        txtValor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        txtValor.addActionListener(new java.awt.event.ActionListener() {
+        jLabelImagem.setBackground(new java.awt.Color(255, 102, 0));
+        jLabelImagem.setForeground(new java.awt.Color(153, 51, 255));
+        jLabelImagem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelImagem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
+        jLabelImagem.setMaximumSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setMinimumSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setPreferredSize(new java.awt.Dimension(120, 120));
+        jLabelImagem.setRequestFocusEnabled(false);
+
+        jButtonImagem.setBackground(new java.awt.Color(243, 49, 107));
+        jButtonImagem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButtonImagem.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonImagem.setText("Inserir Imagem");
+        jButtonImagem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtValorActionPerformed(evt);
+                jButtonImagemActionPerformed(evt);
             }
         });
 
-        jLabel4.setBackground(new java.awt.Color(255, 102, 0));
-        jLabel4.setForeground(new java.awt.Color(153, 51, 255));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pokecafe/assets/camera.png"))); // NOI18N
+        try {
+            txtValor.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("R$ 00,00")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txtValor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNome)
-                        .addComponent(txtIngredientes)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(txtValor)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtNome)
+                    .addComponent(txtIngredientes)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
-                        .addGap(134, 134, 134)))
-                .addContainerGap(30, Short.MAX_VALUE))
-            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                    .addComponent(txtValor))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButtonImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(114, 114, 114))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(122, 122, 122))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(jButtonImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
@@ -165,12 +213,12 @@ public class ModalCriar extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(40, Short.MAX_VALUE))
+                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -187,18 +235,33 @@ public class ModalCriar extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    
+    public double valorLido(){
+        double valor = 0;
+        try {
+            valor = ((Number) txtValor.getValue()).doubleValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return valor;
+    }
+    
+    private void jButtonCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCadastrarActionPerformed
 
         Produto p = new Produto();
         ProdutoDAO dao = new ProdutoDAO();
         p.setNome(txtNome.getText());
         p.setIngredientes(txtIngredientes.getText());
-        p.setPreco(Double.parseDouble(txtValor.getText()));
-
-        dao.create(p);
+        String preco = txtValor.getText().replace(",",".");
+        p.setPreco(Double.parseDouble(preco.replace("R$", "")));
+        p.setImagem(this.path_imagem);
+        if(p.equals("")){
+            new AlertErro(this,"Selecione uma Imagem").setVisible(true);
+        }else{
+            dao.create(p);   
+        }
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonCadastrarActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
         // TODO add your handling code here:
@@ -208,14 +271,40 @@ public class ModalCriar extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIngredientesActionPerformed
 
-    private void txtValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtValorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         // TODO add your handling code here:
         this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
+
+    private void jButtonImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImagemActionPerformed
+        // TODO add your handling code here:
+        File pasta = new File("imagens");
+        if (!pasta.exists()) {
+            pasta.mkdir(); // Cria a pasta se ela ainda não existir
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File imagemSelecionada = fileChooser.getSelectedFile();
+
+            // Copia a imagem para uma pasta do projeto
+            Path destino = Paths.get("imagens/" + imagemSelecionada.getName());
+            try {
+                Files.copy(imagemSelecionada.toPath(), destino, StandardCopyOption.REPLACE_EXISTING);
+                String caminhoImagem = destino.toString();
+                
+                ImageIcon imagem = new ImageIcon(caminhoImagem);
+                Image imagemRedimensionada = imagem.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT);
+                jLabelImagem.setIcon(new ImageIcon(imagemRedimensionada));
+                path_imagem = caminhoImagem;
+
+            } catch (IOException ex) {
+                Logger.getLogger(ModalCriar.class.getName()).log(Level.SEVERE, null, ex);
+            }    
+        }
+    }//GEN-LAST:event_jButtonImagemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -254,17 +343,18 @@ public class ModalCriar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonCadastrar;
+    private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonImagem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JTextField txtIngredientes;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtValor;
+    private javax.swing.JFormattedTextField txtValor;
     // End of variables declaration//GEN-END:variables
 }
