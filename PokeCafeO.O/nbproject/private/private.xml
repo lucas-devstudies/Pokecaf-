@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalAlterarStatus.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/TelaPrincipal.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/model/dao/VendaDAO.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/DashVenda.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalCriar.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalEditar.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalCozinha.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalFinalizarCompra.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/ModalPedido.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/DashCozinha.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/view/DashProdutos.java</file>
+            <file>file:/C:/Users/lucas/Documents/NetBeansProjects/PokeCafeO.O/src/com/pokecafe/connection/ConnectionFactory.java</file>
+        </group>
+    </open-files>
+</project-private>
