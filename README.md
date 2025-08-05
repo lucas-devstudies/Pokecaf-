@@ -55,7 +55,7 @@ As **imagens dos produtos** são carregadas e salvas no sistema, permitindo que 
 
 ---
 
-## ✨ Screenshots *(opcional)*
+## ✨ Screenshots
 
 ### 📌 Tela de Login
 ![login](assets/login.png)
